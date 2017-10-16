@@ -1,203 +1,204 @@
 package com.a605.cse.audiosampler;
 
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-
-import android.os.Bundle;
-import android.view.View;
-
-import android.widget.Button;
-import android.widget.Toast;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Random;
+import java.util.Calendar;
 
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import android.app.Activity;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
+import android.media.MediaRecorder;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 
-import android.support.v4.app.ActivityCompat;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
+public class MainActivity extends Activity implements OnClickListener {
+    RecordAudio recordTask;
+    PlayAudio playTask;
+    Button startRecordingButton, stopRecordingButton, startPlaybackButton,
+            stopPlaybackButton;
+    TextView statusText;
+    File recordingFile;
 
-public class MainActivity extends AppCompatActivity {
+    final static Calendar calendar = Calendar.getInstance();
+    boolean isRecording = false, isPlaying = false;
 
-    Button buttonStart, buttonStop, buttonPlayLastRecordAudio,
-            buttonStopPlayingRecording ;
-    String AudioSavePathInDevice = null;
-    MediaRecorder mediaRecorder ;
-    Random random ;
-    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
-    public static final int RequestPermissionCode = 1;
-    MediaPlayer mediaPlayer ;
-
+    int frequency = 11025, channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
+    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonStart = (Button) findViewById(R.id.button);
-        buttonStop = (Button) findViewById(R.id.button2);
-        buttonPlayLastRecordAudio = (Button) findViewById(R.id.button3);
-        buttonStopPlayingRecording = (Button)findViewById(R.id.button4);
+        statusText = (TextView) this.findViewById(R.id.StatusTextView);
 
-        buttonStop.setEnabled(false);
-        buttonPlayLastRecordAudio.setEnabled(false);
-        buttonStopPlayingRecording.setEnabled(false);
+        startRecordingButton = (Button) this
+                .findViewById(R.id.StartRecordingButton);
+        stopRecordingButton = (Button) this
+                .findViewById(R.id.StopRecordingButton);
+        startPlaybackButton = (Button) this
+                .findViewById(R.id.StartPlaybackButton);
+        stopPlaybackButton = (Button) this
+                .findViewById(R.id.StopPlaybackButton);
 
-        random = new Random();
+        startRecordingButton.setOnClickListener(this);
+        stopRecordingButton.setOnClickListener(this);
+        startPlaybackButton.setOnClickListener(this);
+        stopPlaybackButton.setOnClickListener(this);
 
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        stopRecordingButton.setEnabled(false);
+        startPlaybackButton.setEnabled(false);
+        stopPlaybackButton.setEnabled(false);
 
-                if(checkPermission()) {
-
-                    AudioSavePathInDevice =
-                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
-                                    CreateRandomAudioFileName(5) + "AudioRecording.3gp";
-
-                    MediaRecorderReady();
-
-                    try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                    } catch (IllegalStateException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                    buttonStart.setEnabled(false);
-                    buttonStop.setEnabled(true);
-
-                    Toast.makeText(MainActivity.this, "Recording started",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    requestPermission();
-                }
-
-            }
-        });
-
-        buttonStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mediaRecorder.stop();
-                buttonStop.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-
-                Toast.makeText(MainActivity.this, "Recording Completed",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        buttonPlayLastRecordAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) throws IllegalArgumentException,
-                    SecurityException, IllegalStateException {
-
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(false);
-                buttonStopPlayingRecording.setEnabled(true);
-
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(AudioSavePathInDevice);
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                mediaPlayer.start();
-                Toast.makeText(MainActivity.this, "Recording Playing",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        buttonStopPlayingRecording.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonStop.setEnabled(false);
-                buttonStart.setEnabled(true);
-                buttonStopPlayingRecording.setEnabled(false);
-                buttonPlayLastRecordAudio.setEnabled(true);
-
-                if(mediaPlayer != null){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    MediaRecorderReady();
-                }
-            }
-        });
-
-    }
-
-    public void MediaRecorderReady(){
-        mediaRecorder=new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        mediaRecorder.setOutputFile(AudioSavePathInDevice);
-    }
-
-    public String CreateRandomAudioFileName(int string){
-        StringBuilder stringBuilder = new StringBuilder( string );
-        int i = 0 ;
-        while(i < string ) {
-            stringBuilder.append(RandomAudioFileName.
-                    charAt(random.nextInt(RandomAudioFileName.length())));
-
-            i++ ;
-        }
-        return stringBuilder.toString();
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case RequestPermissionCode:
-                if (grantResults.length> 0) {
-                    boolean StoragePermission = grantResults[0] ==
-                            PackageManager.PERMISSION_GRANTED;
-                    boolean RecordPermission = grantResults[1] ==
-                            PackageManager.PERMISSION_GRANTED;
-
-                    if (StoragePermission && RecordPermission) {
-                        Toast.makeText(MainActivity.this, "Permission Granted",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(MainActivity.this,"Permission Denied",Toast.LENGTH_LONG).show();
-                    }
-                }
-                break;
+        File path = new File(
+                Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + "/Android/data/com.apress.proandroidmedia.ch07.altaudiorecorder/files/");
+        path.mkdirs();
+        try {
+            recordingFile = File.createTempFile("recording", ".pcm", path);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't create file on SD card", e);
         }
     }
 
-    public boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
-                RECORD_AUDIO);
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED;
+    public void onClick(View v) {
+        if (v == startRecordingButton) {
+            record();
+        } else if (v == stopRecordingButton) {
+            stopRecording();
+        } else if (v == startPlaybackButton) {
+            play();
+        } else if (v == stopPlaybackButton) {
+            stopPlaying();
+        }
+    }
+
+    public void play() {
+        startPlaybackButton.setEnabled(true);
+
+        playTask = new PlayAudio();
+        playTask.execute();
+
+        stopPlaybackButton.setEnabled(true);
+    }
+
+    public void stopPlaying() {
+        isPlaying = false;
+        stopPlaybackButton.setEnabled(false);
+        startPlaybackButton.setEnabled(true);
+    }
+
+    public void record() {
+        startRecordingButton.setEnabled(false);
+        stopRecordingButton.setEnabled(true);
+        startPlaybackButton.setEnabled(true);
+        recordTask = new RecordAudio();
+        recordTask.execute();
+    }
+
+    public void stopRecording() {
+        isRecording = false;
+    }
+
+    private class PlayAudio extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            isPlaying = true;
+
+            int bufferSize = AudioTrack.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
+            short[] audiodata = new short[bufferSize / 4];
+
+            try {
+                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(recordingFile)));
+                AudioTrack audioTrack = new AudioTrack(
+                        AudioManager.STREAM_MUSIC, frequency,
+                        channelConfiguration, audioEncoding, bufferSize,
+                        AudioTrack.MODE_STREAM);
+
+                audioTrack.play();
+                while (isPlaying && dis.available() > 0) {
+                    int i = 0;
+                    while (dis.available() > 0 && i < audiodata.length) {
+                        audiodata[i] = dis.readShort();
+                        i++;
+                    }
+                    audioTrack.write(audiodata, 0, audiodata.length);
+                }
+                dis.close();
+
+            } catch (Throwable t) {
+                Log.e("AudioTrack", "Playback Failed");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            startPlaybackButton.setEnabled(false);
+            stopPlaybackButton.setEnabled(true);
+        }
+    }
+
+    private class RecordAudio extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            isRecording = true;
+            try {
+                DataOutputStream dos = new DataOutputStream(
+                        new BufferedOutputStream(new FileOutputStream(
+                                recordingFile)));
+                int bufferSize = AudioRecord.getMinBufferSize(frequency,
+                        channelConfiguration, audioEncoding);
+                AudioRecord audioRecord = new AudioRecord(
+                        MediaRecorder.AudioSource.MIC, frequency,
+                        channelConfiguration, audioEncoding, bufferSize);
+
+                short[] buffer = new short[bufferSize];
+                audioRecord.startRecording();
+                int r = 0;
+                while (isRecording) {
+                    int bufferReadResult = audioRecord.read(buffer, 0,
+                            bufferSize);
+                    for (int i = 0; i < bufferReadResult; i++) {
+                        if (i % 5 == 0) {
+                            Log.d("Audio: ", String.valueOf(buffer.length) + " : " + calendar.getTime());
+                        }
+                        dos.writeShort(buffer[i]);
+                    }
+                    publishProgress(new Integer(r));
+                    r++;
+                }
+                audioRecord.stop();
+                dos.close();
+            } catch (Throwable t) {
+                Log.e("AudioRecord", "Recording Failed");
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            statusText.setText(progress[0].toString());
+        }
+
+        protected void onPostExecute(Void result) {
+            startRecordingButton.setEnabled(true);
+            stopRecordingButton.setEnabled(false);
+            startPlaybackButton.setEnabled(true);
+        }
     }
 }
