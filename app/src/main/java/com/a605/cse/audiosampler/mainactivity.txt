@@ -1,0 +1,68 @@
+package com.a605.cse.audiosampler;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements OnClickListener {
+    String TAG = "AUDIO_SAMPLER";
+    RecoderAsyncTask recordTask;
+    Button startRecordingButton, stopRecordingButton, startPlaybackButton,
+            stopPlaybackButton;
+    public TextView statusText;
+
+    boolean isRecording = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        statusText = (TextView) this.findViewById(R.id.StatusTextView);
+
+        startRecordingButton = (Button) this
+                .findViewById(R.id.StartRecordingButton);
+        stopRecordingButton = (Button) this
+                .findViewById(R.id.StopRecordingButton);
+        startPlaybackButton = (Button) this
+                .findViewById(R.id.StartPlaybackButton);
+        stopPlaybackButton = (Button) this
+                .findViewById(R.id.StopPlaybackButton);
+
+        startRecordingButton.setOnClickListener(this);
+        stopRecordingButton.setOnClickListener(this);
+        startPlaybackButton.setOnClickListener(this);
+        stopPlaybackButton.setOnClickListener(this);
+
+        stopRecordingButton.setEnabled(false);
+        startPlaybackButton.setEnabled(false);
+        stopPlaybackButton.setEnabled(false);
+    }
+
+    public void onClick(View v) {
+        if (v == startRecordingButton) {
+            Log.d(TAG, "Onclick start record");
+            record();
+        } else if (v == stopRecordingButton) {
+            Log.d(TAG, "Onclick stop record");
+            stopRecording();
+        }
+    }
+
+    public void record() {
+        Log.d(TAG, "Inside record");
+        startRecordingButton.setEnabled(false);
+        stopRecordingButton.setEnabled(true);
+        startPlaybackButton.setEnabled(true);
+        recordTask = new RecoderAsyncTask(this);
+        recordTask.execute();
+    }
+
+    public void stopRecording() {
+        isRecording = false;
+    }
+}
