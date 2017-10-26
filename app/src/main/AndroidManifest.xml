@@ -3,7 +3,7 @@
     package="com.a605.cse.audiosampler">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-s
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

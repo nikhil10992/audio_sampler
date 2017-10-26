@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,20 +21,20 @@ import java.util.Map;
  */
 
 public class Communicator {
-    private static final String SERVER_IP = "";
+    private static final String SERVER_IP = "192.168.1.238";
     private static final String PORT = "8080";
     private static String serverURL = "";
     private static String ERROR = "";
     private RequestQueue volleyRequestQueue;
     private Context context;
-    private String audioDataObject;
+    //private String audioDataObject;
 
-    public Communicator(Context _context, String _audioDataObject) {
+    public Communicator(Context _context) {
         this.context = _context;
         volleyRequestQueue = Volley.newRequestQueue(context);
         serverURL = "http://" + SERVER_IP + ":" + PORT;
 
-        audioDataObject = _audioDataObject; // NIKE Send this data.
+        //this.audioDataObject = _audioDataObject; // NIKE Send this data. Not required
     }
 
     public boolean sendData(final String data) {
@@ -50,7 +51,7 @@ public class Communicator {
                     public void onErrorResponse(VolleyError error) {
                         // error
                         ERROR = error.toString();
-                        Log.d("Error.Response", error.toString());
+                        Log.d("Error.Response", error.toString()+" and Data = "+data);
                     }
                 }
         ) {
@@ -61,6 +62,7 @@ public class Communicator {
                 return dataParams;
             }
         };
+        sendDataRequest.setRetryPolicy(new DefaultRetryPolicy(0,0,0));
         volleyRequestQueue.add(sendDataRequest);
         return ERROR.equals("");
     }

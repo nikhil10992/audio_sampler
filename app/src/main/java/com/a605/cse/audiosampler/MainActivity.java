@@ -121,8 +121,8 @@ public class MainActivity extends Activity implements OnClickListener {
         // I have the code for Gson serialization and deserialization.
         String timeStamp = String.valueOf(System.currentTimeMillis());
         AudioDataObject audioDataObject = new AudioDataObject(timeStamp, "fake_intensity", true);
-        Communicator communicator = new Communicator(this, timeStamp); // here we will send audiodataobject later.
-
+        Communicator communicator = new Communicator(this); // here we will send audiodataobject later.
+        communicator.sendData(timeStamp);
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         startPlaybackButton.setEnabled(true);
