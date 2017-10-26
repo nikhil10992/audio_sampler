@@ -1,6 +1,8 @@
 package com.a605.cse.audiosampler;
+
 import java.io.File;
 import java.io.IOException;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -16,7 +18,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     private static final String LOG_TAG = "UNIQUE";
@@ -41,12 +43,12 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted ) finish();
+        if (!permissionToRecordAccepted) finish();
     }
 
     @Override
@@ -113,12 +115,21 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void record() {
+        // NIKE for now we will just send the timestamp over the network.
+        // Later we will send json object and hence will have to use Gson and
+        // use volley's jsonobject communication method. If you have time look into that
+        // I have the code for Gson serialization and deserialization.
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        AudioDataObject audioDataObject = new AudioDataObject(timeStamp, "fake_intensity", true);
+        Communicator communicator = new Communicator(this, timeStamp); // here we will send audiodataobject later.
+
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         startPlaybackButton.setEnabled(true);
         recordTask = new RecordAsyncTask(this, audioConfiguration);
         recordTask.execute();
     }
+
     public void stopRecording() {
         isRecording = false;
     }

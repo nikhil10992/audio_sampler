@@ -26,25 +26,26 @@ public class Communicator {
     private static String ERROR = "";
     private RequestQueue volleyRequestQueue;
     private Context context;
+    private String audioDataObject;
 
-    public Communicator(Context _context){
+    public Communicator(Context _context, String _audioDataObject) {
         this.context = _context;
         volleyRequestQueue = Volley.newRequestQueue(context);
-        serverURL = "http://"+SERVER_IP+":"+PORT;
+        serverURL = "http://" + SERVER_IP + ":" + PORT;
+
+        audioDataObject = _audioDataObject; // NIKE Send this data.
     }
 
-    public boolean sendData(final String data){
+    public boolean sendData(final String data) {
         StringRequest sendDataRequest = new StringRequest(Request.Method.POST, serverURL,
-                new Response.Listener<String>()
-                {
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
                         ERROR = "";
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
@@ -54,9 +55,8 @@ public class Communicator {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  dataParams = new HashMap<>();
+            protected Map<String, String> getParams() {
+                Map<String, String> dataParams = new HashMap<>();
                 dataParams.put("data", data);
                 return dataParams;
             }
@@ -64,7 +64,6 @@ public class Communicator {
         volleyRequestQueue.add(sendDataRequest);
         return ERROR.equals("");
     }
-
 
 
 }

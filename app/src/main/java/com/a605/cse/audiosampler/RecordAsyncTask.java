@@ -52,9 +52,11 @@ class RecordAsyncTask extends AsyncTask<Void, Integer, Void> {
         }
         return null;
     }
+
     protected void onProgressUpdate(Integer... progress) {
         parentActivity.statusText.setText(progress[0].toString());
     }
+
     protected void onPostExecute(Void result) {
         parentActivity.startRecordingButton.setEnabled(true);
         parentActivity.stopRecordingButton.setEnabled(false);

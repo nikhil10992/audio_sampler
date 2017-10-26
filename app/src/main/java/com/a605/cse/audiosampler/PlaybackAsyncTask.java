@@ -26,7 +26,7 @@ public class PlaybackAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {
         parentActivity.isPlaying = true;
 
-        int bufferSize = AudioTrack.getMinBufferSize(audioConfiguration.getFrequency(),audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
+        int bufferSize = AudioTrack.getMinBufferSize(audioConfiguration.getFrequency(), audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
         short[] audiodata = new short[bufferSize / 4];
 
         try {
