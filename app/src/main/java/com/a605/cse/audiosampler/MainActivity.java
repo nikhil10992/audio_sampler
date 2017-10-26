@@ -1,48 +1,59 @@
 package com.a605.cse.audiosampler;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
-
+import android.Manifest;
 import android.app.Activity;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaRecorder;
-import android.os.AsyncTask;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
-    RecordAudio recordTask;
-    PlayAudio playTask;
-    Button startRecordingButton, stopRecordingButton, startPlaybackButton,
-            stopPlaybackButton;
-    TextView statusText;
-    File recordingFile;
 
-    final static Calendar calendar = Calendar.getInstance();
+    // Requesting permission to RECORD_AUDIO
+    private boolean permissionToRecordAccepted = false;
+    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+
+    private static final String LOG_TAG = "UNIQUE";
+
+    private static AudioConfiguration audioConfiguration;
+
+    private RecordAsyncTask recordTask;
+    private PlaybackAsyncTask playTask;
+    private Button startRecordingButton, stopRecordingButton, startPlaybackButton, stopPlaybackButton;
+    private TextView statusText;
+    private File recordingFile;
+
     boolean isRecording = false, isPlaying = false;
 
-    int frequency = 11025, channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    public MainActivity() {
+        audioConfiguration = new AudioConfiguration();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionToRecordAccepted ) finish();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
         setContentView(R.layout.activity_main);
+
 
         statusText = (TextView) this.findViewById(R.id.StatusTextView);
 
@@ -64,12 +75,8 @@ public class MainActivity extends Activity implements OnClickListener {
         startPlaybackButton.setEnabled(false);
         stopPlaybackButton.setEnabled(false);
 
-        File path = new File(
-                Environment.getExternalStorageDirectory().getAbsolutePath()
-                        + "/Android/data/com.apress.proandroidmedia.ch07.altaudiorecorder/files/");
-        path.mkdirs();
         try {
-            recordingFile = File.createTempFile("recording", ".pcm", path);
+            recordingFile = File.createTempFile("recording", ".pcm", this.getCacheDir());
         } catch (IOException e) {
             throw new RuntimeException("Couldn't create file on SD card", e);
         }
@@ -90,7 +97,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public void play() {
         startPlaybackButton.setEnabled(true);
 
-        playTask = new PlayAudio();
+        playTask = new PlaybackAsyncTask(this, audioConfiguration);
         playTask.execute();
 
         stopPlaybackButton.setEnabled(true);
@@ -106,99 +113,10 @@ public class MainActivity extends Activity implements OnClickListener {
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         startPlaybackButton.setEnabled(true);
-        recordTask = new RecordAudio();
+        recordTask = new RecordAsyncTask(this, audioConfiguration);
         recordTask.execute();
     }
-
     public void stopRecording() {
         isRecording = false;
-    }
-
-    private class PlayAudio extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            isPlaying = true;
-
-            int bufferSize = AudioTrack.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
-            short[] audiodata = new short[bufferSize / 4];
-
-            try {
-                DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(recordingFile)));
-                AudioTrack audioTrack = new AudioTrack(
-                        AudioManager.STREAM_MUSIC, frequency,
-                        channelConfiguration, audioEncoding, bufferSize,
-                        AudioTrack.MODE_STREAM);
-
-                audioTrack.play();
-                while (isPlaying && dis.available() > 0) {
-                    int i = 0;
-                    while (dis.available() > 0 && i < audiodata.length) {
-                        audiodata[i] = dis.readShort();
-                        i++;
-                    }
-                    audioTrack.write(audiodata, 0, audiodata.length);
-                }
-                dis.close();
-
-            } catch (Throwable t) {
-                Log.e("AudioTrack", "Playback Failed");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            startPlaybackButton.setEnabled(false);
-            stopPlaybackButton.setEnabled(true);
-        }
-    }
-
-    private class RecordAudio extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            isRecording = true;
-            try {
-                DataOutputStream dos = new DataOutputStream(
-                        new BufferedOutputStream(new FileOutputStream(
-                                recordingFile)));
-                int bufferSize = AudioRecord.getMinBufferSize(frequency,
-                        channelConfiguration, audioEncoding);
-                AudioRecord audioRecord = new AudioRecord(
-                        MediaRecorder.AudioSource.MIC, frequency,
-                        channelConfiguration, audioEncoding, bufferSize);
-
-                short[] buffer = new short[bufferSize];
-                audioRecord.startRecording();
-                int r = 0;
-                while (isRecording) {
-                    int bufferReadResult = audioRecord.read(buffer, 0,
-                            bufferSize);
-                    for (int i = 0; i < bufferReadResult; i++) {
-                        if (i % 5 == 0) {
-                            Log.d("Audio: ", String.valueOf(buffer.length) + " : " + calendar.getTime());
-                        }
-                        dos.writeShort(buffer[i]);
-                    }
-                    publishProgress(new Integer(r));
-                    r++;
-                }
-                audioRecord.stop();
-                dos.close();
-            } catch (Throwable t) {
-                Log.e("AudioRecord", "Recording Failed");
-            }
-            return null;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            statusText.setText(progress[0].toString());
-        }
-
-        protected void onPostExecute(Void result) {
-            startRecordingButton.setEnabled(true);
-            stopRecordingButton.setEnabled(false);
-            startPlaybackButton.setEnabled(true);
-        }
     }
 }

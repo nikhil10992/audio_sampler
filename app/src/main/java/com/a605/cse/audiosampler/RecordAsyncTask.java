@@ -1,63 +1,60 @@
 package com.a605.cse.audiosampler;
-import android.media.AudioFormat;
+
+import android.app.Activity;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.util.Log;
-import java.util.Calendar;
-import static android.content.ContentValues.TAG;
 
-class RecoderAsyncTask extends AsyncTask<Void, Integer, Void> {
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 
-    final static Calendar calendar = Calendar.getInstance();
-    static private MainActivity parentActivity;
+class RecordAsyncTask extends AsyncTask<Void, Integer, Void> {
 
-    int frequency = 11025, channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    private MainActivity parentActivity;
+    private AudioConfiguration audioConfiguration;
 
-    RecoderAsyncTask(MainActivity mainActivity) {
-        Log.d(TAG, "Async Const");
-        parentActivity = mainActivity;
+    public RecordAsyncTask(MainActivity _parentActivity, AudioConfiguration _audioConfiguration) {
+        parentActivity = _parentActivity;
+        audioConfiguration = _audioConfiguration;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        Log.d(TAG, "In DINB");
         parentActivity.isRecording = true;
         try {
-            int bufferSize = AudioRecord.getMinBufferSize(frequency,
-                    channelConfiguration, audioEncoding);
+            DataOutputStream dos = new DataOutputStream(
+                    new BufferedOutputStream(new FileOutputStream(
+                            parentActivity.recordingFile)));
+            int bufferSize = AudioRecord.getMinBufferSize(audioConfiguration.getFrequency(),
+                    audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
             AudioRecord audioRecord = new AudioRecord(
-                    MediaRecorder.AudioSource.MIC, frequency,
-                    channelConfiguration, audioEncoding, bufferSize);
+                    MediaRecorder.AudioSource.MIC, audioConfiguration.getFrequency(),
+                    audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding(), bufferSize);
 
             short[] buffer = new short[bufferSize];
             audioRecord.startRecording();
             int r = 0;
-            Log.d(TAG, "Inside try" + parentActivity.isRecording);
             while (parentActivity.isRecording) {
                 int bufferReadResult = audioRecord.read(buffer, 0,
                         bufferSize);
                 for (int i = 0; i < bufferReadResult; i++) {
-                    if (i % 5 == 0) {
-                        Log.d("Audio: ", String.valueOf(buffer.length) + " : " + calendar.getTime());
-                    }
+                    dos.writeShort(buffer[i]);
                 }
                 publishProgress(new Integer(r));
                 r++;
             }
             audioRecord.stop();
+            dos.close();
         } catch (Throwable t) {
             Log.e("AudioRecord", "Recording Failed");
         }
         return null;
     }
-
     protected void onProgressUpdate(Integer... progress) {
-        Log.d(TAG, "On Progress Update");
         parentActivity.statusText.setText(progress[0].toString());
     }
-
     protected void onPostExecute(Void result) {
         parentActivity.startRecordingButton.setEnabled(true);
         parentActivity.stopRecordingButton.setEnabled(false);
