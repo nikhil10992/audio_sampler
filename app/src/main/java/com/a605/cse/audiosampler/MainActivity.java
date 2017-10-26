@@ -25,11 +25,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private RecordAsyncTask recordTask;
     private PlaybackAsyncTask playTask;
-    private Button startRecordingButton, stopRecordingButton, startPlaybackButton, stopPlaybackButton;
-    private TextView statusText;
-    private File recordingFile;
 
+
+    // Need to handle these better.
     boolean isRecording = false, isPlaying = false;
+    Button startRecordingButton, stopRecordingButton, startPlaybackButton, stopPlaybackButton;
+    TextView statusText;
+    File recordingFile;
+
 
     public MainActivity() {
         audioConfiguration = new AudioConfiguration();
