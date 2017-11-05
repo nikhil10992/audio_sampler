@@ -5,12 +5,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/StatusTextView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Status" />
-
-    <TextView
         android:id="@+id/textAmplitude"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -39,16 +33,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop Recording"></Button>
-
-    <Button
-        android:id="@+id/StartPlaybackButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Playback"></Button>
-
-    <Button
-        android:id="@+id/StopPlaybackButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop Playback"></Button>
 </LinearLayout>
