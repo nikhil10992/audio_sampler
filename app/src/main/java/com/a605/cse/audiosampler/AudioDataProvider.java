@@ -1,5 +1,7 @@
 package com.a605.cse.audiosampler;
 import android.os.Handler;
+import android.os.Looper;
+
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
 
 /**
@@ -14,11 +16,15 @@ public class AudioDataProvider implements CallbackInterface {
 
     public AudioDataProvider(MainActivity _mainActivity) {
         mainActivity = _mainActivity;
+        audioCalculator = new AudioCalculator();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
     public void onBufferAvailable(byte[] buffer) {
         audioCalculator.setBytes(buffer);
+
+        // Calculate the calculation time.
         int amplitude = audioCalculator.getAmplitude();
         double decibel = audioCalculator.getDecibel();
         double frequency = audioCalculator.getFrequency();
