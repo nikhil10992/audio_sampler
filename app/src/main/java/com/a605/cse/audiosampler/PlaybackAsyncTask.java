@@ -26,13 +26,13 @@ public class PlaybackAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {
         parentActivity.isPlaying = true;
 
-        int bufferSize = AudioTrack.getMinBufferSize(audioConfiguration.getFrequency(), audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
+        int bufferSize = AudioTrack.getMinBufferSize(audioConfiguration.getSampleRate(), audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
         short[] audiodata = new short[bufferSize / 4];
 
         try {
             DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(parentActivity.recordingFile)));
             AudioTrack audioTrack = new AudioTrack(
-                    AudioManager.STREAM_MUSIC, audioConfiguration.getFrequency(),
+                    AudioManager.STREAM_MUSIC, audioConfiguration.getSampleRate(),
                     audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding(), bufferSize,
                     AudioTrack.MODE_STREAM);
 

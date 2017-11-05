@@ -1,6 +1,5 @@
 package com.a605.cse.audiosampler;
 
-import android.app.Activity;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -10,12 +9,12 @@ import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 
-class RecordAsyncTask extends AsyncTask<Void, Integer, Void> {
+class RecordThread extends AsyncTask<Void, Integer, Void> {
 
     private MainActivity parentActivity;
     private AudioConfiguration audioConfiguration;
 
-    public RecordAsyncTask(MainActivity _parentActivity, AudioConfiguration _audioConfiguration) {
+    public RecordThread(MainActivity _parentActivity, AudioConfiguration _audioConfiguration) {
         parentActivity = _parentActivity;
         audioConfiguration = _audioConfiguration;
     }
@@ -27,10 +26,10 @@ class RecordAsyncTask extends AsyncTask<Void, Integer, Void> {
             DataOutputStream dos = new DataOutputStream(
                     new BufferedOutputStream(new FileOutputStream(
                             parentActivity.recordingFile)));
-            int bufferSize = AudioRecord.getMinBufferSize(audioConfiguration.getFrequency(),
+            int bufferSize = AudioRecord.getMinBufferSize(audioConfiguration.getSampleRate(),
                     audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding());
             AudioRecord audioRecord = new AudioRecord(
-                    MediaRecorder.AudioSource.MIC, audioConfiguration.getFrequency(),
+                    MediaRecorder.AudioSource.MIC, audioConfiguration.getSampleRate(),
                     audioConfiguration.getChannelConfiguration(), audioConfiguration.getAudioEncoding(), bufferSize);
 
             short[] buffer = new short[bufferSize];

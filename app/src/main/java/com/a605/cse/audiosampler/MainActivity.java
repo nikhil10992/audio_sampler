@@ -25,14 +25,14 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private static AudioConfiguration audioConfiguration;
 
-    private RecordAsyncTask recordTask;
+    private RecordThread recordTask;
     private PlaybackAsyncTask playTask;
 
 
     // Need to handle these better.
     boolean isRecording = false, isPlaying = false;
     Button startRecordingButton, stopRecordingButton, startPlaybackButton, stopPlaybackButton;
-    TextView statusText;
+    TextView statusText, textAmplitude, textDecibel, textFrequency;
     File recordingFile;
 
 
@@ -56,11 +56,13 @@ public class MainActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
         setContentView(R.layout.activity_main);
 
-
         statusText = (TextView) this.findViewById(R.id.StatusTextView);
+
+        textAmplitude = (TextView) findViewById(R.id.textAmplitude);
+        textDecibel = (TextView) findViewById(R.id.textDecibel);
+        textFrequency = (TextView) findViewById(R.id.textFrequency);
 
         startRecordingButton = (Button) this
                 .findViewById(R.id.StartRecordingButton);
@@ -115,10 +117,6 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void record() {
-        // NIKE for now we will just send the timestamp over the network.
-        // Later we will send json object and hence will have to use Gson and
-        // use volley's jsonobject communication method. If you have time look into that
-        // I have the code for Gson serialization and deserialization.
         String timeStamp = String.valueOf(System.currentTimeMillis());
         AudioDataObject audioDataObject = new AudioDataObject(timeStamp, "fake_intensity", true);
         Communicator communicator = new Communicator(this); // here we will send audiodataobject later.
@@ -126,7 +124,8 @@ public class MainActivity extends Activity implements OnClickListener {
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         startPlaybackButton.setEnabled(true);
-        recordTask = new RecordAsyncTask(this, audioConfiguration);
+
+        recordTask = new RecordThread(this, audioConfiguration);
         recordTask.execute();
     }
 
