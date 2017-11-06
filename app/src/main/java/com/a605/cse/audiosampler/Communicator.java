@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 public class Communicator {
-    private static final String SERVER_IP = "192.168.1.238";
+    private static final String SERVER_IP = "192.168.1.229";
     private static final String PORT = "8080";
     private static String serverURL = "";
     private static String ERROR = "";
@@ -33,8 +33,6 @@ public class Communicator {
         this.context = _context;
         volleyRequestQueue = Volley.newRequestQueue(context);
         serverURL = "http://" + SERVER_IP + ":" + PORT;
-
-        //this.audioDataObject = _audioDataObject; // NIKE Send this data. Not required
     }
 
     public boolean sendData(final String data) {
@@ -66,6 +64,4 @@ public class Communicator {
         volleyRequestQueue.add(sendDataRequest);
         return ERROR.equals("");
     }
-
-
 }

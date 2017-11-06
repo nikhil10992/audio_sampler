@@ -22,11 +22,9 @@ public class MainActivity extends Activity implements OnClickListener {
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
-
     private AudioConfiguration audioConfiguration;
     private AudioDataProvider audioDataProvider;
     private RecorderThread recorderThread;
-
 
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
@@ -56,8 +54,12 @@ public class MainActivity extends Activity implements OnClickListener {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_main);
 
+        initializeViews();
 
+        audioDataProvider = new AudioDataProvider(this);
+    }
 
+    public void initializeViews() {
         textAmplitude = (TextView) findViewById(R.id.textAmplitude);
         textDecibel = (TextView) findViewById(R.id.textDecibel);
         textFrequency = (TextView) findViewById(R.id.textFrequency);
@@ -71,8 +73,6 @@ public class MainActivity extends Activity implements OnClickListener {
         stopRecordingButton.setOnClickListener(this);
 
         stopRecordingButton.setEnabled(false);
-
-        audioDataProvider = new AudioDataProvider(this);
     }
 
     public void onClick(View v) {
@@ -84,11 +84,6 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void record() {
-//        String timeStamp = String.valueOf(System.currentTimeMillis());
-//        AudioDataObject audioDataObject = new AudioDataObject(timeStamp, "fake_intensity", true);
-//        Communicator communicator = new Communicator(this); // here we will send audiodataobject later.
-//        communicator.sendData(timeStamp);
-
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
 

@@ -5,48 +5,24 @@ package com.a605.cse.audiosampler;
  * Updated
  */
 
-public class AudioDataObject {
-    private String timestamp = "";
-    private String intensity = "";
-    private boolean FLAG = false;
+class AudioDataObject {
+    private static int counter;
 
-    public AudioDataObject(String _timestamp, String _intensity, boolean _flag) {
-        this.timestamp = _timestamp;
+    private String timestamp;
+    private String amplitude;
+    private String frequency;
+    private String intensity;
+    private String sequenceNumber;
+
+    private AudioDataObject() {
+        this.timestamp = String.valueOf(System.currentTimeMillis());
+        this.sequenceNumber = String.valueOf(++counter);
+    }
+
+    AudioDataObject(String _amplitude, String _frequency, String _intensity) {
+        this();
+        this.amplitude = _amplitude;
+        this.frequency = _frequency;
         this.intensity = _intensity;
-        this.FLAG = _flag;
     }
-
-    public AudioDataObject(String _timestamp, String _intensity) {
-        this.timestamp = _timestamp;
-        this.intensity = _intensity;
-    }
-
-    public AudioDataObject(String _timestamp) {
-        this.timestamp = _timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public void setIntensity(String intensity) {
-        this.intensity = intensity;
-    }
-
-    public void setFlag(Boolean flag) {
-        this.FLAG = flag;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public String getIntensity() {
-        return intensity;
-    }
-
-    public Boolean getFlag() {
-        return FLAG;
-    }
-
 }

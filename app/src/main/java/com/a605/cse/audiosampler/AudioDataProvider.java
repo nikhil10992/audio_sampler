@@ -1,8 +1,11 @@
 package com.a605.cse.audiosampler;
+
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
+import com.google.gson.Gson;
 
 /**
  * Created by might on 11/5/17.
@@ -29,17 +32,38 @@ public class AudioDataProvider implements CallbackInterface {
         double decibel = audioCalculator.getDecibel();
         double frequency = audioCalculator.getFrequency();
 
-        final String amp = String.valueOf(amplitude + " Amp");
-        final String db = String.valueOf(decibel + " db");
-        final String hz = String.valueOf(frequency + " Hz");
+        final String amp = String.valueOf(amplitude);
+        final String db = String.valueOf(decibel);
+        final String hz = String.valueOf(frequency);
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                mainActivity.textAmplitude.setText(amp);
-                mainActivity.textDecibel.setText(db);
-                mainActivity.textFrequency.setText(hz);
-            }
-        });
+        // Printing
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mainActivity.textAmplitude.setText(amp);
+//                mainActivity.textDecibel.setText(db);
+//                mainActivity.textFrequency.setText(hz);
+//            }
+//        });
+
+        if (frequency > 595) {
+
+            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db);
+            Gson gson = new Gson();
+            String jsonAudioDataObject = gson.toJson(audioDataObject);
+            Communicator communicator = new Communicator(mainActivity); // here we will send audiodataobject later.
+            communicator.sendData(jsonAudioDataObject);
+
+            Log.d("UNIQUE", jsonAudioDataObject);
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.textAmplitude.setText(amp + " Amp");
+                    mainActivity.textDecibel.setText(db + " db");
+                    mainActivity.textFrequency.setText(hz + " Hz");
+                }
+            });
+        }
     }
 }
