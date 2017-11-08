@@ -2,6 +2,7 @@ package com.a605.cse.audiosampler;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
@@ -48,7 +49,10 @@ public class AudioDataProvider implements CallbackInterface {
 
         if (frequency > 595) {
 
-            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db);
+            String deviceId = Settings.Secure.getString(mainActivity.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
+            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db, deviceId);
             Gson gson = new Gson();
             String jsonAudioDataObject = gson.toJson(audioDataObject);
             Communicator communicator = new Communicator(mainActivity); // here we will send audiodataobject later.
