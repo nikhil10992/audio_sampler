@@ -11,11 +11,14 @@ import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 
     private static final String LOG_TAG = "UNIQUE";
+
+    public static String ipAddress;
 
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
@@ -29,6 +32,7 @@ public class MainActivity extends Activity implements OnClickListener {
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
     TextView textAmplitude, textDecibel, textFrequency;
+    EditText ipAddressEditText;
     File recordingFile;
 
 
@@ -63,6 +67,7 @@ public class MainActivity extends Activity implements OnClickListener {
         textAmplitude = (TextView) findViewById(R.id.textAmplitude);
         textDecibel = (TextView) findViewById(R.id.textDecibel);
         textFrequency = (TextView) findViewById(R.id.textFrequency);
+        ipAddressEditText = (EditText) findViewById(R.id.ipAddress);
 
         startRecordingButton = (Button) this
                 .findViewById(R.id.StartRecordingButton);
@@ -87,6 +92,7 @@ public class MainActivity extends Activity implements OnClickListener {
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
 
+        ipAddress = ipAddressEditText.getText().toString();
         recorderThread = new RecorderThread(audioConfiguration, audioDataProvider);
         recorderThread.start();
     }

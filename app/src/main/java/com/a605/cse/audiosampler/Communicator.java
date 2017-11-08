@@ -2,7 +2,6 @@ package com.a605.cse.audiosampler;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,17 +20,18 @@ import java.util.Map;
  */
 
 public class Communicator {
-    private static final String SERVER_IP = "192.168.1.229";
     private static final String PORT = "8080";
+    private static String SERVER_IP;
     private static String serverURL = "";
     private static String ERROR = "";
     private RequestQueue volleyRequestQueue;
-    private Context context;
+    private MainActivity mainActivity;
     //private String audioDataObject;
 
-    public Communicator(Context _context) {
-        this.context = _context;
-        volleyRequestQueue = Volley.newRequestQueue(context);
+    public Communicator(MainActivity _mainActivity) {
+        this.mainActivity = _mainActivity;
+        SERVER_IP = _mainActivity.ipAddress;
+        volleyRequestQueue = Volley.newRequestQueue(mainActivity);
         serverURL = "http://" + SERVER_IP + ":" + PORT;
     }
 
