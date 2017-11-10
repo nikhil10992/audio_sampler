@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements OnClickListener {
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
     TextView textAmplitude, textDecibel, textFrequency;
-    EditText ipAddressEditText;
+    EditText ipAddressEditText, inputFrequency;
     File recordingFile;
 
 
@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements OnClickListener {
         textDecibel = (TextView) findViewById(R.id.textDecibel);
         textFrequency = (TextView) findViewById(R.id.textFrequency);
         ipAddressEditText = (EditText) findViewById(R.id.ipAddress);
+        inputFrequency = (EditText) findViewById(R.id.inputFrequency);
 
         startRecordingButton = (Button) this
                 .findViewById(R.id.StartRecordingButton);

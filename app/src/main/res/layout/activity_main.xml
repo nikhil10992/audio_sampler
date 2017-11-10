@@ -30,6 +30,14 @@
         android:inputType="textPersonName"
         android:text="@string/ip_address" />
 
+    <EditText
+        android:id="@+id/inputFrequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/inputFrequency" />
+
     <Button
         android:id="@+id/StartRecordingButton"
         android:layout_width="match_parent"

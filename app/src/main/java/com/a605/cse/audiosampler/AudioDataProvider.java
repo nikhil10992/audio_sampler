@@ -46,8 +46,9 @@ public class AudioDataProvider implements CallbackInterface {
 //                mainActivity.textFrequency.setText(hz);
 //            }
 //        });
+        int targetFrequency = Integer.parseInt(mainActivity.inputFrequency.getText().toString());
 
-        if (frequency > 595) {
+        if (frequency > targetFrequency) {
 
             String deviceId = Settings.Secure.getString(mainActivity.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
