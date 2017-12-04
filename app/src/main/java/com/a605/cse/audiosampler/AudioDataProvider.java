@@ -1,12 +1,15 @@
 package com.a605.cse.audiosampler;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
 import com.google.gson.Gson;
+import com.google.gson.internal.Streams;
 
 /**
  * Created by might on 11/5/17.
@@ -24,10 +27,12 @@ public class AudioDataProvider implements CallbackInterface {
         handler = new Handler(Looper.getMainLooper());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     public void onBufferAvailable(byte[] buffer) {
-        audioCalculator.setBytes(buffer);
+        final String timestamp = String.valueOf(System.currentTimeMillis());
 
+        audioCalculator.setBytes(buffer);
         // Calculate the calculation time.
         int amplitude = audioCalculator.getAmplitude();
         double decibel = audioCalculator.getDecibel();
@@ -53,7 +58,7 @@ public class AudioDataProvider implements CallbackInterface {
             String deviceId = Settings.Secure.getString(mainActivity.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
-            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db, deviceId);
+            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db, deviceId, timestamp);
             Gson gson = new Gson();
             String jsonAudioDataObject = gson.toJson(audioDataObject);
             Communicator communicator = new Communicator(mainActivity); // here we will send audiodataobject later.
