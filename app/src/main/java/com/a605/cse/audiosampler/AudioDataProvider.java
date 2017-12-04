@@ -9,11 +9,6 @@ import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
 import com.google.gson.Gson;
-import com.google.gson.internal.Streams;
-
-/**
- * Created by might on 11/5/17.
- */
 
 public class AudioDataProvider implements CallbackInterface {
 

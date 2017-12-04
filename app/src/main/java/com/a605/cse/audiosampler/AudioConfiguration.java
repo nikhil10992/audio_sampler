@@ -3,10 +3,6 @@ package com.a605.cse.audiosampler;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 
-/**
- * Created by might on 10/23/17.
- */
-
 public class AudioConfiguration {
     private int audioSource;
     private int channelConfiguration;
