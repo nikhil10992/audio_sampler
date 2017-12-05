@@ -18,7 +18,7 @@ import java.util.Map;
  * Updated
  */
 
-public class Communicator {
+class Communicator {
     private static final String PORT = "8080";
     private static String SERVER_IP;
     private static String serverURL = "";
@@ -27,14 +27,14 @@ public class Communicator {
     private MainActivity mainActivity;
     //private String audioDataObject;
 
-    public Communicator(MainActivity _mainActivity) {
+    Communicator(MainActivity _mainActivity) {
         this.mainActivity = _mainActivity;
         SERVER_IP = _mainActivity.ipAddress;
         volleyRequestQueue = Volley.newRequestQueue(mainActivity);
         serverURL = "http://" + SERVER_IP + ":" + PORT;
     }
 
-    public boolean sendData(final String data) {
+    boolean sendData(final String data) {
         StringRequest sendDataRequest = new StringRequest(Request.Method.POST, serverURL,
                 new Response.Listener<String>() {
                     @Override
