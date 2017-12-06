@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 
 class RecorderThread {
 
+    private static final String LOG_TAG = "RecorderThread: ";
     private Thread thread;
     private CallbackInterface callback;
     private MainActivity parentActivity;
@@ -20,6 +21,7 @@ class RecorderThread {
     public RecorderThread(AudioConfiguration _audioConfiguration, CallbackInterface _callback) {
         audioConfiguration = _audioConfiguration;
         callback = _callback;
+        Log.d(LOG_TAG,"Class initialized");
     }
 
     public void setCallback(CallbackInterface callback) {
@@ -27,6 +29,7 @@ class RecorderThread {
     }
 
     public void start() {
+        Log.d(LOG_TAG,"Thread Started");
         if (thread != null) return;
         thread = new Thread(new Runnable() {
             @Override
@@ -66,6 +69,7 @@ class RecorderThread {
         if (thread != null) {
             thread.interrupt();
             thread = null;
+            Log.d(LOG_TAG,"Thread Stopped");
         }
     }
 }

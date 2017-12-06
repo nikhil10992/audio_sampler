@@ -19,6 +19,8 @@ import java.util.Map;
  */
 
 class Communicator {
+
+    private static final String LOG_TAG = "Communicator: ";
     private static final String PORT = "8080";
     private static String SERVER_IP;
     private static String serverURL = "";
@@ -32,12 +34,14 @@ class Communicator {
     }
 
     boolean sendData(final String data) {
+        Log.d(LOG_TAG,"Sending data"+data);
         StringRequest sendDataRequest = new StringRequest(Request.Method.POST, serverURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
                         ERROR = "";
+                        Log.d(LOG_TAG,"Data Sent. Response received = "+response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -45,7 +49,7 @@ class Communicator {
                     public void onErrorResponse(VolleyError error) {
                         // error
                         ERROR = error.toString();
-                        Log.d("Error.Response", error.toString()+" and Data = "+data);
+                        Log.d(LOG_TAG, "Error = "+error.toString()+" and Data = "+data);
                     }
                 }
         ) {
@@ -58,6 +62,7 @@ class Communicator {
         };
         sendDataRequest.setRetryPolicy(new DefaultRetryPolicy(0,0,0));
         volleyRequestQueue.add(sendDataRequest);
+        Log.d(LOG_TAG,"sendData function ends");
         return ERROR.equals("");
     }
 }

@@ -2,8 +2,11 @@ package com.a605.cse.audiosampler;
 
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
+import android.util.Log;
 
 public class AudioConfiguration {
+
+    private static final String LOG_TAG = "AudioConfiguration: ";
     private int audioSource;
     private int channelConfiguration;
     private int audioEncoding;
@@ -14,6 +17,7 @@ public class AudioConfiguration {
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
         audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
         sampleRate = 44100;
+        Log.d(LOG_TAG,"Class Initialized");
     }
 
     public int getAudioSource() {
