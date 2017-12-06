@@ -10,62 +10,68 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by might on 10/23/17.
- * Updated
- */
-
-class Communicator {
+class Communicator extends Thread {
 
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "Communicator";
     private final String LOG_TAG = CLAZZ; // Don't want to clutter AudioSampler tag results.
 
-    private static final String PORT = "8080";
-    private static String SERVER_IP;
-    private static String serverURL = "";
-    private static String ERROR = "";
-    private RequestQueue volleyRequestQueue;
+    private final int PORT = 8080;
+    private String SERVER_IP;
+    private String data;
 
-    Communicator(MainActivity mainActivity) {
+    Communicator(MainActivity mainActivity, String data) {
         SERVER_IP = mainActivity.ipAddress;
-        volleyRequestQueue = Volley.newRequestQueue(mainActivity);
-        serverURL = "http://" + SERVER_IP + ":" + PORT;
+        this.data = data;
     }
 
-    boolean sendData(final String data) {
-        Log.d(LOG_TAG,"Sending data"+data);
-        StringRequest sendDataRequest = new StringRequest(Request.Method.POST, serverURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        ERROR = "";
-                        Log.d(LOG_TAG,"Data Sent. Response received = "+response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        ERROR = error.toString();
-                        Log.d(LOG_TAG, "Error = "+error.toString()+" and Data = "+data);
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> dataParams = new HashMap<>();
-                dataParams.put("data", data);
-                return dataParams;
+    @Override
+    public void run() {
+        Socket clientSocket = null;
+        PrintWriter printWriter = null;
+//        BufferedReader bufferedReader = null;
+
+        try {
+            // Create socket for the destination port.
+            clientSocket = new Socket(SERVER_IP, PORT);
+
+            printWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+            printWriter.println(data);
+
+//            bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//            String portID = bufferedReader.readLine();
+
+        } catch (UnknownHostException e) {
+            Log.e(LOG_TAG, "ClientTask Send UnknownHostException.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "ClientTask Send IOException");
+            e.printStackTrace();
+        } finally {
+            cleanUp(printWriter, clientSocket);
+        }
+    }
+
+    public void cleanUp(PrintWriter writer, Socket socket){
+        // Close output stream
+        if (writer != null) {
+            writer.close();
+        } // Close socket
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Log.i(LOG_TAG, "CleanUp of Socket");
             }
-        };
-        sendDataRequest.setRetryPolicy(new DefaultRetryPolicy(0,0,0));
-        volleyRequestQueue.add(sendDataRequest);
-        Log.d(LOG_TAG,"sendData function ends");
-        return ERROR.equals("");
+        }
     }
 }

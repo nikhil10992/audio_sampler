@@ -64,8 +64,8 @@ public class AudioDataProvider implements CallbackInterface {
 
             Log.d(LOG_TAG,"Sending data through communicator.");
 
-            Communicator communicator = new Communicator(mainActivity);
-            communicator.sendData(jsonAudioDataObject);
+            Communicator communicator = new Communicator(mainActivity, jsonAudioDataObject);
+            communicator.start();
 
             handler.post(new Runnable() {
                 @Override
