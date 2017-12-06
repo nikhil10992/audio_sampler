@@ -11,28 +11,26 @@ import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
     private final String LOG_TAG = "ServerThread: ";
-    private ServerSocket serverSocket;
-
-    ServerThread(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
-    }
+    private final int SERVER_PORT = 5000;
 
     @Override
     public void run() {
         BufferedReader bufferedReader = null;
         PrintWriter printWriter = null;
+        ServerSocket serverSocket = initServerSocket();
         while (true) {
             Socket socket = null;
             try {
                 socket = serverSocket.accept();
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String payload = bufferedReader.readLine();
-                if (payload.equals("TIME")){
-                    Log.d(LOG_TAG, " Sending TimeStamp to the Server.");
-                    String timestamp = String.valueOf(System.currentTimeMillis());
-                    printWriter = new PrintWriter(socket.getOutputStream(), true);
-                    printWriter.println(timestamp);
-                }
+
+                String timestamp = String.valueOf(System.currentTimeMillis());
+
+                Log.d(LOG_TAG, " Sending " + timestamp + " to the Server.");
+
+                printWriter = new PrintWriter(socket.getOutputStream(), true);
+                printWriter.println(timestamp);
             }catch (UnknownHostException e) {
                 Log.e(LOG_TAG, "Server Task UnknownHostException.");
             } catch (IOException e) {
@@ -41,6 +39,16 @@ public class ServerThread extends Thread {
                 cleanUp(printWriter, bufferedReader, socket);
             }
         }
+    }
+
+    private ServerSocket initServerSocket(){
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(SERVER_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return serverSocket;
     }
 
     private void cleanUp(PrintWriter writer, BufferedReader reader, Socket socket){
