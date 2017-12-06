@@ -25,6 +25,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     private RecorderThread recorderThread;
+    private ServerManager serverManager;
 
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
@@ -49,6 +50,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         setContentView(R.layout.activity_main);
+
+        serverManager = new ServerManager();
+        serverManager.start_server();
 
         initializeViews();
     }
@@ -83,6 +87,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void record() {
+        serverManager.stop_server();
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         ipAddress = ipAddressEditText.getText().toString();

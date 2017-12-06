@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
-    private final String LOG_TAG = "ServerThread";
+    private final String LOG_TAG = "ServerThread: ";
     private ServerSocket serverSocket;
 
     ServerThread(ServerSocket serverSocket) {
@@ -28,6 +28,7 @@ public class ServerThread extends Thread {
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String payload = bufferedReader.readLine();
                 if (payload.equals("TIME")){
+                    Log.d(LOG_TAG, " Sending TimeStamp to the Server.");
                     String timestamp = String.valueOf(System.currentTimeMillis());
                     printWriter = new PrintWriter(socket.getOutputStream(), true);
                     printWriter.println(timestamp);
