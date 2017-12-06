@@ -24,12 +24,9 @@ class Communicator {
     private static String serverURL = "";
     private static String ERROR = "";
     private RequestQueue volleyRequestQueue;
-    private MainActivity mainActivity;
-    //private String audioDataObject;
 
-    Communicator(MainActivity _mainActivity) {
-        this.mainActivity = _mainActivity;
-        SERVER_IP = _mainActivity.ipAddress;
+    Communicator(MainActivity mainActivity) {
+        SERVER_IP = mainActivity.ipAddress;
         volleyRequestQueue = Volley.newRequestQueue(mainActivity);
         serverURL = "http://" + SERVER_IP + ":" + PORT;
     }

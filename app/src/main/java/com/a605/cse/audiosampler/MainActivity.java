@@ -18,27 +18,18 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private static final String LOG_TAG = "UNIQUE";
 
-    public static String ipAddress;
-
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
-    private AudioConfiguration audioConfiguration;
-    private AudioDataProvider audioDataProvider;
     private RecorderThread recorderThread;
 
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
     TextView textAmplitude, textDecibel, textFrequency;
     EditText ipAddressEditText, inputFrequency;
-    File recordingFile;
-
-
-    public MainActivity() {
-        audioConfiguration = new AudioConfiguration();
-    }
+    public String ipAddress;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -59,20 +50,18 @@ public class MainActivity extends Activity implements OnClickListener {
         setContentView(R.layout.activity_main);
 
         initializeViews();
-
-        audioDataProvider = new AudioDataProvider(this);
     }
 
     public void initializeViews() {
-        textAmplitude = (TextView) findViewById(R.id.textAmplitude);
-        textDecibel = (TextView) findViewById(R.id.textDecibel);
-        textFrequency = (TextView) findViewById(R.id.textFrequency);
-        ipAddressEditText = (EditText) findViewById(R.id.ipAddress);
-        inputFrequency = (EditText) findViewById(R.id.inputFrequency);
+        textAmplitude = findViewById(R.id.textAmplitude);
+        textDecibel = findViewById(R.id.textDecibel);
+        textFrequency = findViewById(R.id.textFrequency);
+        ipAddressEditText = findViewById(R.id.ipAddress);
+        inputFrequency = findViewById(R.id.inputFrequency);
 
-        startRecordingButton = (Button) this
+        startRecordingButton = this
                 .findViewById(R.id.StartRecordingButton);
-        stopRecordingButton = (Button) this
+        stopRecordingButton = this
                 .findViewById(R.id.StopRecordingButton);
 
         startRecordingButton.setOnClickListener(this);
@@ -92,8 +81,11 @@ public class MainActivity extends Activity implements OnClickListener {
     public void record() {
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
-
         ipAddress = ipAddressEditText.getText().toString();
+
+        AudioDataProvider audioDataProvider = new AudioDataProvider(this);
+        AudioConfiguration audioConfiguration = new AudioConfiguration();
+
         recorderThread = new RecorderThread(audioConfiguration, audioDataProvider);
         recorderThread.start();
     }

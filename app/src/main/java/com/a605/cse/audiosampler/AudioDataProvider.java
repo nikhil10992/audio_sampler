@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
+import com.a605.cse.audiosampler.dataobjects.AudioDataObject;
 import com.google.gson.Gson;
 
 public class AudioDataProvider implements CallbackInterface {
