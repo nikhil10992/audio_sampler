@@ -6,7 +6,10 @@ import android.util.Log;
 
 public class AudioConfiguration {
 
-    private static final String LOG_TAG = "AudioConfiguration: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "AudioConfiguration";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private int audioSource;
     private int channelConfiguration;
     private int audioEncoding;

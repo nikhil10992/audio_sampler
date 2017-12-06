@@ -10,7 +10,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
-    private final String LOG_TAG = "ServerThread: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "ServerThread";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private final int SERVER_PORT = 5000;
 
     @Override

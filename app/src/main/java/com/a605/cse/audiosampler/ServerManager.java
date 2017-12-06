@@ -7,7 +7,10 @@ import java.net.ServerSocket;
 
 public class ServerManager {
 
-    private static final String LOG_TAG = "ServerManager: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "ServerManager";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private ServerThread serverThread;
 
     public void start_server(){

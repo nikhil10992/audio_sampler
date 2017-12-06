@@ -20,7 +20,10 @@ import java.util.Map;
 
 class Communicator {
 
-    private static final String LOG_TAG = "Communicator: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "Communicator";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private static final String PORT = "8080";
     private static String SERVER_IP;
     private static String serverURL = "";

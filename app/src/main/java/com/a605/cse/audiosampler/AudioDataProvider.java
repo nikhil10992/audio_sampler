@@ -13,7 +13,10 @@ import com.google.gson.Gson;
 
 public class AudioDataProvider implements CallbackInterface {
 
-    private static final String LOG_TAG = "AudioDataProvider: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "AudioDataProvider";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private AudioCalculator audioCalculator;
     private Handler handler;
     private MainActivity mainActivity;

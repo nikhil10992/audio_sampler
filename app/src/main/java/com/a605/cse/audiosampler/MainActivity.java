@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-    private static final String LOG_TAG = "MainActivity";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "MainActivity";
+    private final String LOG_TAG = NAME + CLAZZ;
 
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;

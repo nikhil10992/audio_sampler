@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 
 class RecorderThread {
 
-    private static final String LOG_TAG = "RecorderThread: ";
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "RecorderThread";
+    private final String LOG_TAG = NAME + CLAZZ;
+
     private Thread thread;
     private CallbackInterface callback;
     private MainActivity parentActivity;
