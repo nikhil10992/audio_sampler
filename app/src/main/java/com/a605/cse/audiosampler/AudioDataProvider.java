@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 public class AudioDataProvider implements CallbackInterface {
 
+    private static final String LOG_TAG = "AudioDataProvider: ";
     private AudioCalculator audioCalculator;
     private Handler handler;
     private MainActivity mainActivity;
@@ -25,6 +26,7 @@ public class AudioDataProvider implements CallbackInterface {
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     public void onBufferAvailable(byte[] buffer) {
+        Log.d(LOG_TAG,"onBufferAvailable method called");
         final String timestamp = String.valueOf(System.currentTimeMillis());
 
         audioCalculator.setBytes(buffer);
@@ -57,9 +59,9 @@ public class AudioDataProvider implements CallbackInterface {
             Gson gson = new Gson();
             String jsonAudioDataObject = gson.toJson(audioDataObject);
             Communicator communicator = new Communicator(mainActivity); // here we will send audiodataobject later.
+            Log.d(LOG_TAG,"Communicator class initialized");
+            Log.d(LOG_TAG,"Sending data through communicator");
             communicator.sendData(jsonAudioDataObject);
-
-            Log.d("UNIQUE", jsonAudioDataObject);
 
             handler.post(new Runnable() {
                 @Override

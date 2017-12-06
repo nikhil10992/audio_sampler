@@ -6,8 +6,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,7 +18,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-    private static final String LOG_TAG = "UNIQUE";
+    private static final String LOG_TAG = "MainActivity: ";
 
     public static String ipAddress;
 
@@ -31,7 +33,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
-    TextView textAmplitude, textDecibel, textFrequency;
+    TextView textAmplitude, textDecibel, textFrequency, textDeviceId;
     EditText ipAddressEditText, inputFrequency;
     File recordingFile;
 
@@ -67,9 +69,12 @@ public class MainActivity extends Activity implements OnClickListener {
         textAmplitude = (TextView) findViewById(R.id.textAmplitude);
         textDecibel = (TextView) findViewById(R.id.textDecibel);
         textFrequency = (TextView) findViewById(R.id.textFrequency);
+        textDeviceId = findViewById(R.id.deviceId);
         ipAddressEditText = (EditText) findViewById(R.id.ipAddress);
         inputFrequency = (EditText) findViewById(R.id.inputFrequency);
-
+        // Set Device Id
+        String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        textDeviceId.setText(deviceId);
         startRecordingButton = (Button) this
                 .findViewById(R.id.StartRecordingButton);
         stopRecordingButton = (Button) this
@@ -92,9 +97,9 @@ public class MainActivity extends Activity implements OnClickListener {
     public void record() {
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
-
         ipAddress = ipAddressEditText.getText().toString();
         recorderThread = new RecorderThread(audioConfiguration, audioDataProvider);
+        Log.d(LOG_TAG,"Recorder Thread Initialized");
         recorderThread.start();
     }
 
