@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -16,7 +17,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-    private static final String LOG_TAG = "UNIQUE";
+    private static final String LOG_TAG = "MainActivity";
 
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
@@ -27,7 +28,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     // Need to handle these better.
     Button startRecordingButton, stopRecordingButton;
-    TextView textAmplitude, textDecibel, textFrequency;
+    TextView textAmplitude, textDecibel, textFrequency, textDeviceId;
     EditText ipAddressEditText, inputFrequency;
     public String ipAddress;
 
@@ -58,7 +59,10 @@ public class MainActivity extends Activity implements OnClickListener {
         textFrequency = findViewById(R.id.textFrequency);
         ipAddressEditText = findViewById(R.id.ipAddress);
         inputFrequency = findViewById(R.id.inputFrequency);
-
+        textDeviceId = findViewById(R.id.deviceId);
+        String deviceId = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        textDeviceId.append(deviceId);
         startRecordingButton = this
                 .findViewById(R.id.StartRecordingButton);
         stopRecordingButton = this
