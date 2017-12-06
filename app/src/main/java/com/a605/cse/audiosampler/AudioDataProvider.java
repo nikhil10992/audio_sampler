@@ -15,7 +15,7 @@ public class AudioDataProvider implements CallbackInterface {
 
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "AudioDataProvider";
-    private final String LOG_TAG = NAME + CLAZZ;
+    private final String LOG_TAG = CLAZZ; // Don't want to clutter AudioSampler tag results.
 
     private AudioCalculator audioCalculator;
     private Handler handler;
@@ -30,7 +30,6 @@ public class AudioDataProvider implements CallbackInterface {
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     public void onBufferAvailable(byte[] buffer) {
-        Log.d(LOG_TAG,"onBufferAvailable method called");
         final String timestamp = String.valueOf(System.currentTimeMillis());
 
         audioCalculator.setBytes(buffer);
@@ -62,9 +61,10 @@ public class AudioDataProvider implements CallbackInterface {
             AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db, deviceId, timestamp);
             Gson gson = new Gson();
             String jsonAudioDataObject = gson.toJson(audioDataObject);
-            Communicator communicator = new Communicator(mainActivity); // here we will send audiodataobject later.
-            Log.d(LOG_TAG,"Communicator class initialized");
-            Log.d(LOG_TAG,"Sending data through communicator");
+
+            Log.d(LOG_TAG,"Sending data through communicator.");
+
+            Communicator communicator = new Communicator(mainActivity);
             communicator.sendData(jsonAudioDataObject);
 
             handler.post(new Runnable() {

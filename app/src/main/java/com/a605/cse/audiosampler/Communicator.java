@@ -22,7 +22,7 @@ class Communicator {
 
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "Communicator";
-    private final String LOG_TAG = NAME + CLAZZ;
+    private final String LOG_TAG = CLAZZ; // Don't want to clutter AudioSampler tag results.
 
     private static final String PORT = "8080";
     private static String SERVER_IP;
