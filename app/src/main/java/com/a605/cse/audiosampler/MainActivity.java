@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void record() {
-        serverManager.stop_server();
+        //serverManager.stop_server();
         startRecordingButton.setEnabled(false);
         stopRecordingButton.setEnabled(true);
         ipAddress = ipAddressEditText.getText().toString();
