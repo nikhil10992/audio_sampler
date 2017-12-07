@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.a605.cse.audiosampler.dataobjects.AudioDataObject;
+
 public class MainActivity extends Activity implements OnClickListener {
 
     private String NAME = "AudioSampler:: ";
@@ -30,7 +32,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private ServerManager serverManager;
 
     // Need to handle these better.
-    Button startRecordingButton, stopRecordingButton;
+    Button startRecordingButton, stopRecordingButton, resetButton;
     TextView textAmplitude, textDecibel, textFrequency, textDeviceId;
     EditText ipAddressEditText, inputFrequency;
     public String ipAddress;
@@ -73,9 +75,11 @@ public class MainActivity extends Activity implements OnClickListener {
                 .findViewById(R.id.StartRecordingButton);
         stopRecordingButton = this
                 .findViewById(R.id.StopRecordingButton);
+        resetButton = this.findViewById(R.id.ResetButton);
 
         startRecordingButton.setOnClickListener(this);
         stopRecordingButton.setOnClickListener(this);
+        resetButton.setOnClickListener(this);
 
         stopRecordingButton.setEnabled(false);
     }
@@ -85,6 +89,8 @@ public class MainActivity extends Activity implements OnClickListener {
             record();
         } else if (v == stopRecordingButton) {
             stopRecording();
+        } else if (v == resetButton){
+            resetApp();
         }
     }
 
@@ -105,5 +111,10 @@ public class MainActivity extends Activity implements OnClickListener {
         recorderThread.stop();
         startRecordingButton.setEnabled(true);
         stopRecordingButton.setEnabled(false);
+    }
+
+    public void resetApp() {
+        stopRecording();
+        AudioDataObject.counter = 0;
     }
 }
