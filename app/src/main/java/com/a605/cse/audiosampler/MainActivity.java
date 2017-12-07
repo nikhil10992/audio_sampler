@@ -114,7 +114,6 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void resetApp() {
-        stopRecording();
         AudioDataObject.counter = 0;
     }
 }
