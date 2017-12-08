@@ -1,7 +1,5 @@
 package com.a605.cse.audiosampler;
 
-import java.io.File;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -62,26 +60,25 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     public void initializeViews() {
-        textAmplitude = findViewById(R.id.textAmplitude);
         textDecibel = findViewById(R.id.textDecibel);
-        textFrequency = findViewById(R.id.textFrequency);
-        ipAddressEditText = findViewById(R.id.ipAddress);
-        inputFrequency = findViewById(R.id.inputFrequency);
+        resetButton = findViewById(R.id.ResetButton);
         textDeviceId = findViewById(R.id.deviceId);
-        String deviceId = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        textDeviceId.append(deviceId);
-        startRecordingButton = this
-                .findViewById(R.id.StartRecordingButton);
-        stopRecordingButton = this
-                .findViewById(R.id.StopRecordingButton);
-        resetButton = this.findViewById(R.id.ResetButton);
+        textAmplitude = findViewById(R.id.textAmplitude);
+        textFrequency = findViewById(R.id.textFrequency);
+        inputFrequency = findViewById(R.id.inputFrequency);
+        ipAddressEditText = findViewById(R.id.ipAddress);
+        stopRecordingButton = findViewById(R.id.StopRecordingButton);
+        startRecordingButton = findViewById(R.id.StartRecordingButton);
 
         startRecordingButton.setOnClickListener(this);
         stopRecordingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
         stopRecordingButton.setEnabled(false);
+
+        String deviceId = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        textDeviceId.append(deviceId);
     }
 
     public void onClick(View v) {
@@ -89,7 +86,7 @@ public class MainActivity extends Activity implements OnClickListener {
             record();
         } else if (v == stopRecordingButton) {
             stopRecording();
-        } else if (v == resetButton){
+        } else if (v == resetButton) {
             resetApp();
         }
     }
