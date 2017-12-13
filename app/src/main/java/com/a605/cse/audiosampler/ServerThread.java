@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
+    public static boolean SYNCHRONIZING = false;
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "ServerThread";
     private final String LOG_TAG = NAME + CLAZZ;
@@ -18,6 +19,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        SYNCHRONIZING = !SYNCHRONIZING;
         BufferedReader bufferedReader = null;
         PrintWriter printWriter = null;
         ServerSocket serverSocket = initServerSocket();
@@ -28,18 +30,20 @@ public class ServerThread extends Thread {
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String payload = bufferedReader.readLine();
 
-                String timestamp = String.valueOf(System.currentTimeMillis());
+                if(payload.equals("1")){
+                    String timestamp = String.valueOf(System.currentTimeMillis());
+                    Log.d(LOG_TAG, " Sending " + timestamp + " to the Server.");
 
-                Log.d(LOG_TAG, " Sending " + timestamp + " to the Server.");
-
-                printWriter = new PrintWriter(socket.getOutputStream(), true);
-                printWriter.println(timestamp);
+                    printWriter = new PrintWriter(socket.getOutputStream(), true);
+                    printWriter.println(timestamp);
+                }
             }catch (UnknownHostException e) {
                 Log.e(LOG_TAG, "Server Task UnknownHostException.");
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Server Task IOException.");
             } finally {
                 cleanUp(printWriter, bufferedReader, socket);
+                SYNCHRONIZING = !SYNCHRONIZING;
             }
         }
     }
