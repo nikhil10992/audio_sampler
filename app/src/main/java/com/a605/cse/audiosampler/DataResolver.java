@@ -46,9 +46,11 @@ public class DataResolver {
                 isSynchronized = true;
                 networkDataObject = new SyncDataObject(deviceID, timestamp);
                 Log.d(LOG_TAG, "Sending Sync Data Object");
-            } else { // making an assumption. if (frequency >= LISTENING_FREQUENCY)
-                networkDataObject = new AudioDataObject(deviceID, timestamp);
-                Log.d(LOG_TAG, "Sending Audio Data Object");
+            } else { // making an assumption.
+                if (frequency >= LISTENING_FREQUENCY) {
+                    networkDataObject = new AudioDataObject(deviceID, timestamp);
+                    Log.d(LOG_TAG, "Sending Audio Data Object");
+                }
             }
             printToMain(frequency);
         }
