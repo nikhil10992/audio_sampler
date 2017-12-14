@@ -44,15 +44,6 @@ public class AudioDataProvider implements CallbackInterface {
         final String db = String.valueOf(decibel);
         final String hz = String.valueOf(frequency);
 
-        // Printing
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mainActivity.textAmplitude.setText(amp);
-//                mainActivity.textDecibel.setText(db);
-//                mainActivity.textFrequency.setText(hz);
-//            }
-//        });
         int targetFrequency = Integer.parseInt(mainActivity.inputFrequency.getText().toString());
         int syncFrequency = 5000;
 
