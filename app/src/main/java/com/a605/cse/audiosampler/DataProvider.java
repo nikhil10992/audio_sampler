@@ -24,11 +24,14 @@ public class DataProvider implements CallbackInterface {
     @Override
     public void onBufferAvailable(byte[] buffer) {
         // Calculate the calculation time.
-        NetworkDataObject networkDataObject = dataResolver.resolveDataObject(buffer);
-        Gson gson = new Gson();
-        String jsonAudioDataObject = gson.toJson(networkDataObject);
+        NetworkDataObject networkDataObject = dataResolver.getDataObject(buffer);
 
-        Communicator communicator = new Communicator(mainActivity, jsonAudioDataObject);
-        communicator.start();
+        if (networkDataObject != null){
+            Gson gson = new Gson();
+            String jsonAudioDataObject = gson.toJson(networkDataObject);
+
+            Communicator communicator = new Communicator(mainActivity, jsonAudioDataObject);
+            communicator.start();
+        }
     }
 }

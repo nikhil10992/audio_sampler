@@ -31,7 +31,7 @@ public class DataResolver {
         audioCalculator = new AudioCalculator();
     }
 
-    public NetworkDataObject resolveDataObject(byte[] buffer) {
+    public NetworkDataObject getDataObject(byte[] buffer) {
         final String timestamp = String.valueOf(System.currentTimeMillis());
         NetworkDataObject networkDataObject = null;
         double frequency = getFrequency(buffer);
