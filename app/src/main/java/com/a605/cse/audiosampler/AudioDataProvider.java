@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
 import com.a605.cse.audiosampler.dataobjects.AudioDataObject;
+import com.a605.cse.audiosampler.dataobjects.NetworkDataObject;
+import com.a605.cse.audiosampler.dataobjects.SyncDataObject;
 import com.google.gson.Gson;
 
 public class AudioDataProvider implements CallbackInterface {
@@ -52,17 +54,23 @@ public class AudioDataProvider implements CallbackInterface {
 //            }
 //        });
         int targetFrequency = Integer.parseInt(mainActivity.inputFrequency.getText().toString());
+        int syncFrequency = 5000;
 
-        if (frequency > targetFrequency && !ServerThread.SYNCHRONIZING) {
-
+        if (frequency > syncFrequency) {
             String deviceId = Settings.Secure.getString(mainActivity.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
-
-            AudioDataObject audioDataObject = new AudioDataObject(amp, hz, db, deviceId, timestamp);
             Gson gson = new Gson();
-            String jsonAudioDataObject = gson.toJson(audioDataObject);
+            NetworkDataObject networkDataObject;
 
-            Log.d(LOG_TAG,"Sending data through communicator.");
+            if (frequency > targetFrequency) {
+                networkDataObject = new AudioDataObject(amp, hz, db, deviceId, timestamp);
+                Log.d(LOG_TAG, "Sending audio data through communicator.");
+            } else {
+                networkDataObject = new SyncDataObject(deviceId, timestamp);
+                Log.d(LOG_TAG, "Sending sync data through communicator.");
+            }
+
+            String jsonAudioDataObject = gson.toJson(networkDataObject);
 
             Communicator communicator = new Communicator(mainActivity, jsonAudioDataObject);
             communicator.start();

@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
-    public static boolean SYNCHRONIZING = false;
+//    public static boolean SYNCHRONIZING = false;
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "ServerThread";
     private final String LOG_TAG = NAME + CLAZZ;
@@ -19,7 +19,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
-        SYNCHRONIZING = !SYNCHRONIZING;
+//        SYNCHRONIZING = !SYNCHRONIZING;
         BufferedReader bufferedReader = null;
         PrintWriter printWriter = null;
         ServerSocket serverSocket = initServerSocket();
@@ -43,7 +43,7 @@ public class ServerThread extends Thread {
                 Log.e(LOG_TAG, "Server Task IOException.");
             } finally {
                 cleanUp(printWriter, bufferedReader, socket);
-                SYNCHRONIZING = !SYNCHRONIZING;
+//                SYNCHRONIZING = !SYNCHRONIZING;
             }
         }
     }

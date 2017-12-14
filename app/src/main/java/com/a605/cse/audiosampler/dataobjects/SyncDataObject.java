@@ -1,13 +1,13 @@
 package com.a605.cse.audiosampler.dataobjects;
 
-public class SyncDataObject {
-    int messageId;
-    String senderTimestamp;
-    String receiverTimestamp;
+public class SyncDataObject extends NetworkDataObject {
+    public String deviceID;
+    public String timestamp;
 
-    public SyncDataObject(int messageId, String senderTimestamp)
+    public SyncDataObject(String deviceID, String timestamp)
     {
-        this.messageId = messageId;
-        this.senderTimestamp = senderTimestamp;
+        super("Christian");
+        this.deviceID = deviceID;
+        this.timestamp = timestamp;
     }
 }
