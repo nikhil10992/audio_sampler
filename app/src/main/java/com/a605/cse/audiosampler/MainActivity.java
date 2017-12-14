@@ -97,10 +97,10 @@ public class MainActivity extends Activity implements OnClickListener {
         stopRecordingButton.setEnabled(true);
         ipAddress = ipAddressEditText.getText().toString();
 
-        AudioDataProvider audioDataProvider = new AudioDataProvider(this);
+        DataProvider dataProvider = new DataProvider(this);
         AudioConfiguration audioConfiguration = new AudioConfiguration();
 
-        recorderThread = new RecorderThread(audioConfiguration, audioDataProvider);
+        recorderThread = new RecorderThread(audioConfiguration, dataProvider);
         recorderThread.start();
     }
 

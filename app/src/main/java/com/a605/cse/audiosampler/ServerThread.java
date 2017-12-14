@@ -1,6 +1,7 @@
 package com.a605.cse.audiosampler;
 
 import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +11,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
-//    public static boolean SYNCHRONIZING = false;
+    //    public static boolean SYNCHRONIZING = false;
     private String NAME = "AudioSampler:: ";
     private String CLAZZ = "ServerThread";
     private final String LOG_TAG = NAME + CLAZZ;
@@ -30,14 +31,14 @@ public class ServerThread extends Thread {
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String payload = bufferedReader.readLine();
 
-                if(payload.equals("1")){
+                if (payload.equals("1")) {
                     String timestamp = String.valueOf(System.currentTimeMillis());
                     Log.d(LOG_TAG, " Sending " + timestamp + " to the Server.");
 
                     printWriter = new PrintWriter(socket.getOutputStream(), true);
                     printWriter.println(timestamp);
                 }
-            }catch (UnknownHostException e) {
+            } catch (UnknownHostException e) {
                 Log.e(LOG_TAG, "Server Task UnknownHostException.");
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Server Task IOException.");
@@ -48,7 +49,7 @@ public class ServerThread extends Thread {
         }
     }
 
-    private ServerSocket initServerSocket(){
+    private ServerSocket initServerSocket() {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
@@ -58,7 +59,7 @@ public class ServerThread extends Thread {
         return serverSocket;
     }
 
-    private void cleanUp(PrintWriter writer, BufferedReader reader, Socket socket){
+    private void cleanUp(PrintWriter writer, BufferedReader reader, Socket socket) {
         // Close output stream
         if (writer != null) {
             writer.close();
