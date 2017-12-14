@@ -37,8 +37,6 @@ public class DataResolver {
         double frequency = getFrequency(buffer);
 
         if (frequency >= SYNC_FREQUENCY) {
-
-
             if (!isSynchronized) {
                 networkDataObject = new SyncDataObject(deviceID, timestamp);
                 isSynchronized = true;
