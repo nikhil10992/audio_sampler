@@ -3,6 +3,7 @@ package com.a605.cse.audiosampler;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.a605.cse.audiosampler.calculators.AudioCalculator;
 import com.a605.cse.audiosampler.dataobjects.AudioDataObject;
@@ -10,6 +11,10 @@ import com.a605.cse.audiosampler.dataobjects.NetworkDataObject;
 import com.a605.cse.audiosampler.dataobjects.SyncDataObject;
 
 public class DataResolver {
+
+    private String NAME = "AudioSampler:: ";
+    private String CLAZZ = "DataProvider";
+    private final String LOG_TAG = NAME + CLAZZ; // Don't want to clutter AudioSampler tag results.
 
     private boolean isSynchronized;
     private AudioCalculator audioCalculator;
@@ -38,10 +43,12 @@ public class DataResolver {
 
         if (frequency >= SYNC_FREQUENCY) {
             if (!isSynchronized) {
-                networkDataObject = new SyncDataObject(deviceID, timestamp);
                 isSynchronized = true;
+                networkDataObject = new SyncDataObject(deviceID, timestamp);
+                Log.d(LOG_TAG, "Sending Sync Data Object");
             } else { // making an assumption. if (frequency >= LISTENING_FREQUENCY)
                 networkDataObject = new AudioDataObject(deviceID, timestamp);
+                Log.d(LOG_TAG, "Sending Audio Data Object");
             }
             printToMain(frequency);
         }
